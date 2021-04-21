@@ -41,108 +41,62 @@ los mismos.
 # Construccion de modelos
 
 def newCatalog():
-    """Crea un catalogo con las siguientes entradas:
-    1. halfList: Una lista con las entradas del primer archivo csv.
-    2. completeList: Una lista de todas las entradas que estan en ambos archivos csv combinadas
-    3. Una lista de diccionarios con los artistas y el numero de veces que cada uno se repite en el completeList
-    4. Una lista de diccionarios con las pistas y el numero de veces que cada una se repite en el completeList
-    5. Un RBT creado para ordenar las entradas del primer archivo csv y poderlas combinar con el segundo archivo."""
 
-    catalog = {"halfList":None,
-                "completeList": None,
-                "artistList":None,
-                "trackList":None,
+    catalog = {"reps":None,
                 "trackMap":None}
 
-    catalog["halfList"] = lt.newList("SINGLE_LINKED")
-    catalog["completeList"] = lt.newList("SINGLE_LINKED")
-    catalog["artistList"] = lt.newList("SINGLE_LINKED")
-    catalog["trackList"] = lt.newList("SINGLE_LINKED")
-    catalog["trackMap"]= om.newMap(omaptype='RBT')
+    catalog["reps"] = lt.newList("SINGLE_LINKED")
+    catalog["instrumentalnessIndex"]= om.newMap(omaptype='RBT')
     return catalog
 
 # Funciones para agregar informacion al catalogo
 
-def addFirstEntrySet(catalog, entry):
-    lt.addLast(catalog["halfList"], entry)
-    position = lt.size
-    addToTrackMap(catalog,entry,position)
+def addRep(catalog, rep):
+    lt.addLast(catalog["reps"], rep)
+    updateInstrumentalnessIndex(catalog["instrumentalnessIndex"],rep)
 
-def addSecondEntrySet(catalog, entry):
-    date = entry["created_at"]
-    trackId = entry["track_id"]
-    userId = entry["user_id"]
-    artistId = entry["artist_id"]
-    trackMap = catalog["trackMap"]
-    artistList = catalog["artistList"]
-    trackList = catalog["trackList"]
-    userMap = me.getValue(om.get(trackMap, trackId))
-    dateMap = me.getValue(om.get(userMap, userId))
-    position = me.getValue(om.get(dateMap, date))
-    halfEntry = lt.getElement(catalog["halfList"], position)
-    fullEntry = halfEntry + entry
-    lt.addLast(catalog["completeList"], fullEntry)
+def updateInstrumentalnessIndex(map, rep):
+    repInstrumentalness = rep['instrumentalness']
+    entry = om.get(map,repInstrumentalness)
+    if (entry is None):
+        dataentry = newDataEntry(rep)
+        om.put(map, repInstrumentalness, dataentry)
+    else:
+        dataentry = me.getValue(entry)
+    addInstrumentalnessIndex(dataentry, rep)
+    return map
 
-    existsArtist = lt.isPresent(artistList,artistId)
-    existsTrack = lt.isPresent(trackList,trackId)
-    if existsArtist != 0:
-        artistEntry = lt.getElement(artistList,existsArtist)
-        artistEntry["repetitions"]+=1
-    else:
-        artistEntry = newArtistEntry(artistId)
-        lt.addLast(artistList,artistEntry)
-    if existsTrack == 0:
-        trackEntry = newTrackEntry(trackId)
-        lt.addLast(trackList,trackEntry)
-    else:
-        trackEntry = lt.getElement(trackList,existsTrack)
-        artistEntry["repetitions"]+=1
 
-def addToTrackMap(catalog, entry, position):
-    trackMap = catalog["trackMap"]
-    existsTrack = om.contains(trackMap, entry["track_id"])
-    if existsTrack==True:
-        userMap = me.getValue(om.get(trackMap, entry["track_id"]))
-        existsUser = om.contains(userMap, entry["user_id"])
-        if existsUser:
-            dateMap = me.getValue(om.get(userMap, entry["user_id"]))
-            om.put(dateMap,entry["created_at"],position)
-        else:
-            dateMap = newDateMap()
-            om.put(dateMap,entry["created_at"],position)
-            om.put(userMap,entry["user_id"],dateMap)
-    else:
-        userMap = newUserMap()
-        dateMap = newDateMap()
-        om.put(dateMap, entry["created_at"], position)
-        om.put(userMap, entry["user_id"], dateMap)
-        om.put(trackMap, ["track_id"], userMap)
+def addInstrumentalnessIndex(dataentry, rep):
+    lt.addLast(dataentry,rep)
+    return dataentry
+
+def newDataEntry(rep):
+    entry = lt.newList("SINGLE_LINKED")
+    return entry
+   
 
 
 # Funciones para creacion de datos
-
-def newUserMap():
-    userMap = om.newMap(omaptype="RBT")
-    return userMap
-
-def newDateMap():
-    dateMap = om.newMap(omaptype="RBT")
-    return dateMap
-
-def newArtistEntry(artistId):
-    entry = {"artistId": None, "repetitions": 1}
-    entry["artistId"]= artistId
-    return entry
-
-def newTrackEntry(trackId):
-    entry = {"trackId": None, "repetitions": 1}
-    entry["trackId"]= trackId
-    return entry
 
 
 
 # Funciones de consulta
 
+def repSize(catalog):
+    return lt.size(catalog["reps"])
+
+def indexHeight(catalog):
+    return om.size(catalog["instrumentalnessIndex"])
+
+def getInstrimentalnessByRange(catalog, minIns, maxIns):
+    lst = om.values(catalog["instrumentalnessIndex"], minIns, maxIns)
+    totreps = 0
+    for lstrep in lt.iterator(lst):
+        totreps += lt.size(lstrep)
+    return totreps
+
 # Funciones utilizadas para comparar elementos dentro de una lista
+
 
 # Funciones de ordenamiento

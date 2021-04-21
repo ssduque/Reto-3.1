@@ -37,7 +37,7 @@ operación solicitada
 def printMenu():
     print("Bienvenido")
     print("1- Cargar información en el catálogo")
-    print("2- ")
+    print("2- Buscar eventos de escucha en rango de instrumentalidad ")
 
 catalog = None
 
@@ -51,8 +51,13 @@ while True:
         print("Cargando información de los archivos ....")
         catalog = controller.initCatalog()
         controller.loadEvents(catalog)
+        print('Eventos cargados: ' + str(controller.repSize(catalog)))
+        print('Altura del arbol: ' + str(controller.indexHeight(catalog)))
     elif int(inputs[0]) == 2:
-        pass
+        minIns = input("Ingrese la instrumentalidad minima: ")
+        maxIns = input("Ingrese la instrumentalidad maxima: ")
+        total = controller.getInstrimentalnessByRange(catalog, minIns, maxIns)
+        print("\nTotal de eventos de escucha en el rango de instrumentalidad: " + str(total))
 
     else:
         sys.exit(0)

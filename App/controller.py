@@ -38,17 +38,23 @@ def initCatalog():
 # Funciones para la carga de datos
 
 def loadEvents(catalog):
-    eventsfile1 = cf.data_dir + "subsamples-small/user_track_hashtag_timestamp-small.csv"
-    eventsfile2 = cf.data_dir + "subsmples-small/context_content_features-small.csv"
+    eventsfile1 = cf.data_dir + "subsamples-small/context_content_features-small.csv"
     eventsDict1 = csv.DictReader(open(eventsfile1, encoding='utf-8'))
-    eventsDict2 = csv.DictReader(open(eventsfile2, encoding='utf-8'))
-    for entry in eventsDict1:
-        model.addFirstEntrySet(catalog, entry)
-    for entry in eventsDict2:
-        model.addSecondEntrySet(catalog, entry)
+    for rep in eventsDict1:
+        model.addRep(catalog, rep)
+    
         
 
 
 # Funciones de ordenamiento
 
 # Funciones de consulta sobre el catálogo
+
+def repSize(catalog):
+   return model.repSize(catalog)
+
+def indexHeight(catalog):
+   return model.indexHeight(catalog)
+
+def getInstrimentalnessByRange(catalog, minIns, maxIns):
+    return model.getInstrimentalnessByRange(catalog, minIns, maxIns)
