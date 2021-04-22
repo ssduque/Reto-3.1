@@ -53,8 +53,8 @@ def loadEvents(catalog):
 def repSize(catalog):
    return model.repSize(catalog)
 
-def indexHeight(catalog):
-   return model.indexHeight(catalog)
+def indexHeight(catalogIndex):
+   return model.indexHeight(catalogIndex)
 
 def getInstrimentalnessByRange(catalog, minIns, maxIns):
     return model.getInstrimentalnessByRange(catalog, minIns, maxIns)

@@ -52,12 +52,12 @@ while True:
         catalog = controller.initCatalog()
         controller.loadEvents(catalog)
         print('Eventos cargados: ' + str(controller.repSize(catalog)))
-        print('Altura del arbol: ' + str(controller.indexHeight(catalog)))
     elif int(inputs[0]) == 2:
         minIns = input("Ingrese la instrumentalidad minima: ")
         maxIns = input("Ingrese la instrumentalidad maxima: ")
         total = controller.getInstrimentalnessByRange(catalog, minIns, maxIns)
         print("\nTotal de eventos de escucha en el rango de instrumentalidad: " + str(total))
+        print('Altura del arbol: ' + str(controller.indexHeight(catalog["instrumentalnessIndex"])))
 
     else:
         sys.exit(0)
