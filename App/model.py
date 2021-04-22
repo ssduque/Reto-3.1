@@ -43,7 +43,7 @@ los mismos.
 def newCatalog():
 
     catalog = {"reps":None,
-                "trackMap":None}
+                "instrumentalnessIndex":None}
 
     catalog["reps"] = lt.newList("SINGLE_LINKED")
     catalog["instrumentalnessIndex"]= om.newMap(omaptype='RBT')
