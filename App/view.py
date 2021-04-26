@@ -39,7 +39,7 @@ def printMenu():
     print("1- Cargar información en el catálogo")
     print("2- Buscar eventos de escucha en rango de instrumentalidad ")
 
-catalog = None
+catalog = {}
 
 """
 Menu principal

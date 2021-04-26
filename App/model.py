@@ -48,9 +48,9 @@ def newCatalog():
                 "speechiness":None,
                 "danceability":None,
                 "valence":None,
-                "loudness",None,
-                "tempo",None,
-                "acousticness",None}
+                "loudness":None,
+                "tempo":None,
+                "acousticness":None}
 
     catalog["reps"] = lt.newList("SINGLE_LINKED")
     catalog["instrumentalnessIndex"]= om.newMap(omaptype='RBT')
