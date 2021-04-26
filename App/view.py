@@ -37,10 +37,24 @@ operación solicitada
 def printMenu():
     print("Bienvenido")
     print("1- Cargar información en el catálogo")
-    print("2- Buscar eventos de escucha en rango de instrumentalidad ")
+    print("2- Buscar eventos de escucha en rango de la caracteristica deseada")
+
+
+def printCharacteristics():
+    print("1. Instrumentalness")
+    print("2. Liveness")
+    print("3. Speechiness")
+
+    print("4. Danceability")
+    print("5. Valence")
+    print("6. Loudness")
+
+    print("7. Tempo")
+    print("8. Acousticness")
+    print("9. Energy")
 
 catalog = {}
-
+charList = controller.newCharList()
 """
 Menu principal
 """
@@ -53,11 +67,18 @@ while True:
         controller.loadEvents(catalog)
         print('Eventos cargados: ' + str(controller.repSize(catalog)))
     elif int(inputs[0]) == 2:
-        minIns = input("Ingrese la instrumentalidad minima: ")
-        maxIns = input("Ingrese la instrumentalidad maxima: ")
-        total = controller.getInstrimentalnessByRange(catalog, minIns, maxIns)
-        print("\nTotal de eventos de escucha en el rango de instrumentalidad: " + str(total))
-        print('Altura del arbol: ' + str(controller.indexHeight(catalog["instrumentalnessIndex"])))
+        printCharacteristics()
+        charPos = int(input("Ingrese el numero de la caracteristica que desea buscar: "))
+        bestChar = controller.getChar(charList, charPos)
+        if bestChar == None:
+            print("Ingrese una numero valido")
+        else:
+            minChar = float(input("Ingrese el minimo de "+bestChar+": "))
+            maxChar = float(input("Ingrese el maximo de "+bestChar+": "))
+
+            total = controller.getCharByRange(catalog, bestChar, minChar, maxChar)
+            print("\nTotal de eventos de escucha en el rango de "+bestChar+": " + str(total))
+            print('Altura del arbol: ' + str(controller.indexHeight(catalog[bestChar])))
 
     else:
         sys.exit(0)

@@ -43,7 +43,7 @@ los mismos.
 def newCatalog():
 
     catalog = {"reps":None,
-                "instrumentalnessIndex":None,
+                "instrumentalness":None,
                 "liveness":None,
                 "speechiness":None,
                 "danceability":None,
@@ -53,8 +53,8 @@ def newCatalog():
                 "acousticness":None}
 
     catalog["reps"] = lt.newList("SINGLE_LINKED")
-    catalog["instrumentalnessIndex"]= om.newMap(omaptype='RBT')
-    catalog["liveness] = om.newMap(omaptype='RBT')
+    catalog["instrumentalness"]= om.newMap(omaptype='RBT')
+    catalog["liveness"] = om.newMap(omaptype='RBT')
     catalog["speechiness"] = om.newMap(omaptype='RBT')
     catalog["danceability"] = om.newMap(omaptype='RBT')
     catalog["valence"] = om.newMap(omaptype='RBT')
@@ -64,11 +64,27 @@ def newCatalog():
     
     return catalog
 
+def newCharList():
+    charList = mp.newMap(numelements = 18, loadfactor = 0.5, prime = 19, maptype="PROBING")
+    mp.put(charList, 1, "instrumentalness")
+    mp.put(charList, 2, "liveness")
+    mp.put(charList, 3, "speechiness")
+
+    mp.put(charList, 4, "danceability")
+    mp.put(charList, 5, "valence")
+    mp.put(charList, 6, "loudness")
+
+    mp.put(charList, 7, "tempo")
+    mp.put(charList, 8, "acousticness")
+    mp.put(charList, 9, "energy")
+    return charList
+
+
 # Funciones para agregar informacion al catalogo
 
 def addRep(catalog, rep):
     lt.addLast(catalog["reps"], rep)
-    updateInstrumentalnessIndex(catalog["instrumentalnessIndex"],rep)
+    updateInstrumentalness(catalog["instrumentalness"],rep)
     updateLiveness(catalog["liveness"],rep)
     updateSpeechiness(catalog["speechiness"],rep)
     updateDanceability(catalog["danceability"],rep)
@@ -88,7 +104,7 @@ def newDataEntry(rep):
 
 
 def updateAcousticness(map, rep):
-    repAcousticness = rep['instrumentalness']
+    repAcousticness = float(rep['acousticness'])
     entry = om.get(map,repAcousticness)
     if (entry is None):
         dataentry = newDataEntry(rep)
@@ -99,7 +115,7 @@ def updateAcousticness(map, rep):
     return map
 
 def updateDanceability(map, rep):
-    repDanceability = rep['instrumentalness']
+    repDanceability = float(rep['danceability'])
     entry = om.get(map,repDanceability)
     if (entry is None):
         dataentry = newDataEntry(rep)
@@ -109,8 +125,8 @@ def updateDanceability(map, rep):
     addEntry(dataentry, rep)
     return map
 
-def updateInstrumentalnessIndex(map, rep):
-    repInstrumentalness = rep['instrumentalness']
+def updateInstrumentalness(map, rep):
+    repInstrumentalness = float(rep['instrumentalness'])
     entry = om.get(map,repInstrumentalness)
     if (entry is None):
         dataentry = newDataEntry(rep)
@@ -121,7 +137,7 @@ def updateInstrumentalnessIndex(map, rep):
     return map
 
 def updateLiveness(map, rep):
-    repLiveness = rep['instrumentalness']
+    repLiveness = float(rep['liveness'])
     entry = om.get(map,repLiveness)
     if (entry is None):
         dataentry = newDataEntry(rep)
@@ -132,7 +148,7 @@ def updateLiveness(map, rep):
     return map
 
 def updateLoudness(map, rep):
-    repLoudness = rep['instrumentalness']
+    repLoudness = float(rep['loudness'])
     entry = om.get(map,repLoudness)
     if (entry is None):
         dataentry = newDataEntry(rep)
@@ -143,7 +159,7 @@ def updateLoudness(map, rep):
     return map
 
 def updateSpeechiness(map, rep):
-    repSpeechiness = rep['instrumentalness']
+    repSpeechiness = float(rep['speechiness'])
     entry = om.get(map,repSpeechiness)
     if (entry is None):
         dataentry = newDataEntry(rep)
@@ -154,7 +170,7 @@ def updateSpeechiness(map, rep):
     return map
 
 def updateTempo(map, rep):
-    repTempo = rep['instrumentalness']
+    repTempo = float(rep['tempo'])
     entry = om.get(map,repTempo)
     if (entry is None):
         dataentry = newDataEntry(rep)
@@ -165,7 +181,7 @@ def updateTempo(map, rep):
     return map
 
 def updateValence(map, rep):
-    repValence = rep['instrumentalness']
+    repValence = float(rep['valence'])
     entry = om.get(map,repValence)
     if (entry is None):
         dataentry = newDataEntry(rep)
@@ -185,11 +201,14 @@ def repSize(catalog):
     return lt.size(catalog["reps"])
 
 def indexHeight(catalogIndex):
-    return om.size(catalogIndex)
+    return om.height(catalogIndex)
 
+def getChar(charList, charPos):
+    bestChar = mp.get(charList, charPos)
+    return me.getValue(bestChar)
 
-def getInstrimentalnessByRange(catalog, minIns, maxIns):
-    lst = om.values(catalog["instrumentalnessIndex"], minIns, maxIns)
+def getCharByRange(catalog, bestChar, minIns, maxIns):
+    lst = om.values(catalog[bestChar], minIns, maxIns)
     totreps = 0
     for lstrep in lt.iterator(lst):
         totreps += lt.size(lstrep)

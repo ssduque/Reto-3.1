@@ -35,6 +35,10 @@ def initCatalog():
     catalog = model.newCatalog()
     return catalog
 
+def newCharList():
+    charList = model.newCharList()
+    return charList
+
 # Funciones para la carga de datos
 
 def loadEvents(catalog):
@@ -49,6 +53,9 @@ def loadEvents(catalog):
 # Funciones de ordenamiento
 
 # Funciones de consulta sobre el catálogo
+def getChar(charList, charPos):
+    bestChar = model.getChar(charList, charPos)
+    return bestChar
 
 def repSize(catalog):
    return model.repSize(catalog)
@@ -56,5 +63,6 @@ def repSize(catalog):
 def indexHeight(catalogIndex):
    return model.indexHeight(catalogIndex)
 
-def getInstrimentalnessByRange(catalog, minIns, maxIns):
-    return model.getInstrimentalnessByRange(catalog, minIns, maxIns)
+def getCharByRange(catalog,bestChar, minchar, maxchar):
+    return model.getCharByRange(catalog, bestChar, minchar, maxchar)
+
