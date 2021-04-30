@@ -44,9 +44,13 @@ def newCharList():
 def loadEvents(catalog):
     eventsfile1 = cf.data_dir + "subsamples-small/context_content_features-small.csv"
     eventsDict1 = csv.DictReader(open(eventsfile1, encoding='utf-8'))
+    eventsfile2 = cf.data_dir + "subsamples-small/user_track_hashtag_timestamp-small.csv"
+    eventsDict2 = csv.DictReader(open(eventsfile2, encoding='utf-8'))
+    for rep2 in eventsDict2:
+        model.addRep2(catalog, rep2)
     for rep in eventsDict1:
-        model.addRep(catalog, rep)
-    
+        position = model.getPosition(catalog)
+        model.addReps(catalog, rep, position)
         
 
 
@@ -63,6 +67,13 @@ def repSize(catalog):
 def indexHeight(catalogIndex):
    return model.indexHeight(catalogIndex)
 
+def numArtists(catalog):
+    return model.numArtists(catalog)
+
+# Primer requerimiento
+
 def getCharByRange(catalog,bestChar, minchar, maxchar):
-    return model.getCharByRange(catalog, bestChar, minchar, maxchar)
+    answers = model.getCharByRange(catalog, bestChar, minchar, maxchar)
+    return answers
+# Segundo requerimiento
 

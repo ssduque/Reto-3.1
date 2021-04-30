@@ -50,18 +50,23 @@ def newCatalog():
                 "valence":None,
                 "loudness":None,
                 "tempo":None,
-                "acousticness":None}
+                "acousticness":None,
+                "trackMap":None,
+                "artists":None,
+                "reps2": None}
 
-    catalog["reps"] = lt.newList("SINGLE_LINKED")
-    catalog["instrumentalness"]= om.newMap(omaptype='RBT')
-    catalog["liveness"] = om.newMap(omaptype='RBT')
-    catalog["speechiness"] = om.newMap(omaptype='RBT')
-    catalog["danceability"] = om.newMap(omaptype='RBT')
-    catalog["valence"] = om.newMap(omaptype='RBT')
-    catalog["loudness"] = om.newMap(omaptype='RBT')
-    catalog["tempo"] = om.newMap(omaptype='RBT')
-    catalog["acousticness"] = om.newMap(omaptype='RBT')
-    
+    catalog["reps"] = lt.newList(datastructure="ARRAY_LIST")
+    catalog["instrumentalness"]= om.newMap(omaptype='RBT', comparefunction=cmpCharacteristics)
+    catalog["liveness"] = om.newMap(omaptype='RBT', comparefunction=cmpCharacteristics)
+    catalog["speechiness"] = om.newMap(omaptype='RBT', comparefunction=cmpCharacteristics)
+    catalog["danceability"] = om.newMap(omaptype='RBT', comparefunction=cmpCharacteristics)
+    catalog["valence"] = om.newMap(omaptype='RBT', comparefunction=cmpCharacteristics)
+    catalog["loudness"] = om.newMap(omaptype='RBT', comparefunction=cmpCharacteristics)
+    catalog["tempo"] = om.newMap(omaptype='RBT', comparefunction=cmpCharacteristics)
+    catalog["acousticness"] = om.newMap(omaptype='RBT', comparefunction=cmpCharacteristics)
+    catalog["artists"] = mp.newMap(numelements=40000, prime=20011, maptype="CHAINING", loadfactor = 2.0, comparefunction=cmpArtistId)
+    catalog["reps2"] = mp.newMap(numelements=40000, prime=20011, maptype="CHAINING", loadfactor = 2.0, comparefunction=cmpUserId)
+
     return catalog
 
 def newCharList():
@@ -82,114 +87,153 @@ def newCharList():
 
 # Funciones para agregar informacion al catalogo
 
-def addRep(catalog, rep):
-    lt.addLast(catalog["reps"], rep)
-    updateInstrumentalness(catalog["instrumentalness"],rep)
-    updateLiveness(catalog["liveness"],rep)
-    updateSpeechiness(catalog["speechiness"],rep)
-    updateDanceability(catalog["danceability"],rep)
-    updateValence(catalog["valence"],rep)
-    updateLoudness(catalog["loudness"],rep)
-    updateTempo(catalog["tempo"],rep)
-    updateAcousticness(catalog["acousticness"],rep)
+def addRep2(catalog, rep2):
+    addToMap(catalog,rep2)
+
+def addRep1(catalog,rep):
+    existsRep = mp.get(catalog["reps2"], rep["user_id"])
+    if existsRep != None:
+        repList = me.getValue(existsRep)
+        for rep2 in lt.iterator(repList):
+            if rep2["track_id"]==rep["track_id"] and rep["created_at"]==rep2["created_at"]:
+                lt.addLast(catalog["reps"], rep)
+                break
+    else:
+        return -1
+
+def addReps(catalog, rep, position):
+    ans = addRep1(catalog,rep)
+    addArtist(catalog, rep, position)
+    if ans == -1:
+        return None
+    else:
+        updateInstrumentalness(catalog["instrumentalness"],rep, position)
+        updateLiveness(catalog["liveness"],rep, position)
+        updateSpeechiness(catalog["speechiness"],rep, position)
+        updateDanceability(catalog["danceability"],rep, position)
+        updateValence(catalog["valence"],rep, position)
+        updateLoudness(catalog["loudness"],rep, position)
+        updateTempo(catalog["tempo"],rep, position)
+        updateAcousticness(catalog["acousticness"],rep, position)
     
 
 def addEntry(dataentry, rep):
     lt.addLast(dataentry,rep)
     return dataentry
 
-def newDataEntry(rep):
-    entry = lt.newList("SINGLE_LINKED")
+def newDataEntry():
+    entry = lt.newList("ARRAY_LIST")
     return entry
 
+def addToMap(catalog,rep2):
+    existsEntry = mp.get(catalog["reps2"], rep2["user_id"])
+    if existsEntry == None:
+        dataentry = newDataEntry()
+        mp.put(catalog["reps2"],rep2["user_id"],dataentry)
+    else:
+        dataentry = me.getValue(existsEntry)
+    addEntry(dataentry, rep2)
 
-def updateAcousticness(map, rep):
+def addArtist(catalog, rep, position):
+    existsArtist = mp.get(catalog["artists"], rep["artist_id"])
+    if existsArtist == None:
+        dataentry = newDataEntry()
+        mp.put(catalog["artists"], rep["artist_id"],dataentry)
+    else:
+        dataentry = me.getValue(existsArtist)
+    addEntry(dataentry,position)
+
+# Funciones para la carga de las caracteristicas
+
+def updateAcousticness(map, rep, position):
     repAcousticness = float(rep['acousticness'])
     entry = om.get(map,repAcousticness)
     if (entry is None):
-        dataentry = newDataEntry(rep)
+        dataentry = newDataEntry()
         om.put(map, repAcousticness, dataentry)
     else:
         dataentry = me.getValue(entry)
-    addEntry(dataentry, rep)
+    addEntry(dataentry, position)
     return map
 
-def updateDanceability(map, rep):
+def updateDanceability(map, rep, position):
     repDanceability = float(rep['danceability'])
     entry = om.get(map,repDanceability)
     if (entry is None):
-        dataentry = newDataEntry(rep)
+        dataentry = newDataEntry()
         om.put(map, repDanceability, dataentry)
     else:
         dataentry = me.getValue(entry)
-    addEntry(dataentry, rep)
+    addEntry(dataentry, position)
     return map
 
-def updateInstrumentalness(map, rep):
+def updateInstrumentalness(map, rep, position):
     repInstrumentalness = float(rep['instrumentalness'])
     entry = om.get(map,repInstrumentalness)
     if (entry is None):
-        dataentry = newDataEntry(rep)
+        dataentry = newDataEntry()
         om.put(map, repInstrumentalness, dataentry)
     else:
         dataentry = me.getValue(entry)
-    addEntry(dataentry, rep)
+    addEntry(dataentry, position)
     return map
 
-def updateLiveness(map, rep):
+def updateLiveness(map, rep, position):
     repLiveness = float(rep['liveness'])
     entry = om.get(map,repLiveness)
     if (entry is None):
-        dataentry = newDataEntry(rep)
+        dataentry = newDataEntry()
         om.put(map, repLiveness, dataentry)
     else:
         dataentry = me.getValue(entry)
-    addEntry(dataentry, rep)
+    addEntry(dataentry, position)
     return map
 
-def updateLoudness(map, rep):
+def updateLoudness(map, rep, position):
     repLoudness = float(rep['loudness'])
     entry = om.get(map,repLoudness)
     if (entry is None):
-        dataentry = newDataEntry(rep)
+        dataentry = newDataEntry()
         om.put(map, repLoudness, dataentry)
     else:
         dataentry = me.getValue(entry)
-    addEntry(dataentry, rep)
+    addEntry(dataentry, position)
     return map
 
-def updateSpeechiness(map, rep):
+def updateSpeechiness(map, rep, position):
     repSpeechiness = float(rep['speechiness'])
     entry = om.get(map,repSpeechiness)
     if (entry is None):
-        dataentry = newDataEntry(rep)
+        dataentry = newDataEntry()
         om.put(map, repSpeechiness, dataentry)
     else:
         dataentry = me.getValue(entry)
-    addEntry(dataentry, rep)
+    addEntry(dataentry, position)
     return map
 
-def updateTempo(map, rep):
+def updateTempo(map, rep, position):
     repTempo = float(rep['tempo'])
     entry = om.get(map,repTempo)
     if (entry is None):
-        dataentry = newDataEntry(rep)
+        dataentry = newDataEntry()
         om.put(map, repTempo, dataentry)
     else:
         dataentry = me.getValue(entry)
-    addEntry(dataentry, rep)
+    addEntry(dataentry, position)
     return map
 
-def updateValence(map, rep):
+def updateValence(map, rep, position):
     repValence = float(rep['valence'])
     entry = om.get(map,repValence)
     if (entry is None):
-        dataentry = newDataEntry(rep)
+        dataentry = newDataEntry()
         om.put(map, repValence, dataentry)
     else:
         dataentry = me.getValue(entry)
-    addEntry(dataentry, rep)
+    addEntry(dataentry, position)
     return map
+#------------------------------------------------
+
 
 # Funciones para creacion de datos
 
@@ -207,14 +251,77 @@ def getChar(charList, charPos):
     bestChar = mp.get(charList, charPos)
     return me.getValue(bestChar)
 
+def getPosition(catalog):
+    pos = lt.size(catalog["reps"]) + 1
+    return pos
+
+def numArtists(catalog):
+    artistList = mp.keySet(catalog["artists"])
+    return lt.size(artistList)
+#--------------------------------------------------------------------------------------------
+
+# Primer Requerimiento
+
 def getCharByRange(catalog, bestChar, minIns, maxIns):
     lst = om.values(catalog[bestChar], minIns, maxIns)
-    totreps = 0
-    for lstrep in lt.iterator(lst):
-        totreps += lt.size(lstrep)
-    return totreps
+    finalLst = deleteRepeated(lst)
+    totreps = lt.size(finalLst)
+    return totreps, lst
+
+def deleteRepeated(lst):
+    finalLst = lt.newList(datastructure="ARRAY_LIST", cmpfunction=cmpPosition)
+    for cmpLst in lt.iterator(lst):
+        for cmpPos in lt.iterator(cmpLst):
+            if lt.isPresent(finalLst, cmpPos) == 0:
+                lt.addLast(finalLst, cmpPos)
+    return finalLst
+
+# Segundo Requerimiento
+
+
+
+# Tercer Requerimiento
+
+# Cuarto Requerimiento
+
+# Quinto Requerimiento
 
 # Funciones utilizadas para comparar elementos dentro de una lista
 
+def cmpCharacteristics(char1, char2):
+    if (float(char1) == float(char2)):
+        return 0
+    elif float(char1) > float(char2):
+        return 1
+    else:
+        return -1
+
+def cmpPosition(pos1,pos2):
+    if int(pos1) == int(pos2):
+        return 0
+    elif int(pos1) > int(pos2):
+        return 1
+    else:
+        return -1
+
+def cmpUserId(id1,entry):
+    identry = me.getKey(entry)
+    if (int(id1) == int(identry)):
+        return 0
+    elif (int(id1) > int(identry)):
+        return 1
+    else:
+        return -1
+
+def cmpArtistId(id1, entry):
+    identry = me.getKey(entry)
+    if id1 == identry:
+        return 0
+    elif id1 > identry:
+        return 1
+    else:
+        return -1
 
 # Funciones de ordenamiento
+
+

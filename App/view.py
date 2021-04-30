@@ -65,20 +65,27 @@ while True:
         print("Cargando información de los archivos ....")
         catalog = controller.initCatalog()
         controller.loadEvents(catalog)
+        numArtist = controller.numArtists(catalog)
         print('Eventos cargados: ' + str(controller.repSize(catalog)))
+        print("Artistas unicos: " + str(numArtist))
     elif int(inputs[0]) == 2:
         printCharacteristics()
-        charPos = int(input("Ingrese el numero de la caracteristica que desea buscar: "))
-        bestChar = controller.getChar(charList, charPos)
-        if bestChar == None:
+        charPos = input("Ingrese el numero de la caracteristica que desea buscar: ")
+        if charPos <= 0 or charPos > 9 or type(charPos) != int:
             print("Ingrese una numero valido")
         else:
+            charPos = int(charPos)
+            bestChar = controller.getChar(charList, charPos)
             minChar = float(input("Ingrese el minimo de "+bestChar+": "))
             maxChar = float(input("Ingrese el maximo de "+bestChar+": "))
-
-            total = controller.getCharByRange(catalog, bestChar, minChar, maxChar)
-            print("\nTotal de eventos de escucha en el rango de "+bestChar+": " + str(total))
-            print('Altura del arbol: ' + str(controller.indexHeight(catalog[bestChar])))
+            if minChar > 1.00 or minChar < -1.00 or maxChar > 1.00 or maxChar < -1.00:
+                print("Ingrese un numero entre 1 y -1.")
+            else:
+                total = controller.getCharByRange(catalog, bestChar, minChar, maxChar)
+                print("\nTotal de eventos de escucha en el rango de "+bestChar+": " + str(total[0]))
+                print('Altura del arbol: ' + str(controller.indexHeight(catalog[bestChar])))
+    elif int(inputs[0]) == 3:
+        pass
 
     else:
         sys.exit(0)
