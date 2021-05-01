@@ -86,6 +86,7 @@ while True:
         numArtist = controller.numArtists(catalog)
         print('Eventos cargados: ' + str(controller.repSize(catalog)))
         print("Artistas unicos: " + str(numArtist))
+
     elif int(inputs[0]) == 2:
         printCharacteristics()
         charPos = int(input("Ingrese el numero de la caracteristica que desea buscar: "))
@@ -101,8 +102,15 @@ while True:
                 total = controller.getCharByRange(catalog, bestChar, minChar, maxChar)
                 print("\nTotal de eventos de escucha en el rango de "+bestChar+": " + str(total[0]))
                 print('Altura del arbol: ' + str(controller.indexHeight(catalog[bestChar])))
+
     elif int(inputs[0]) == 3:
-        pass
+        minCharE = float(input("Ingrese el minimo de Energia: "))
+        maxCharE = float(input("Ingrese el maximo de Energia: "))
+        minCharD = float(input("Ingrese el minimo de Danzabilidad: "))
+        maxCharD = float(input("Ingrese el maximo de Danzabilidad: "))
+        result = controller.req2(catalog, minCharE, maxCharE, minCharD, maxCharD)
+        answer = lt.size(result)
+        print("\nTotal de pistas unicas para festejar: " + answer)
     
     elif int(inputs[0]) ==5:
         printGenres()
@@ -118,19 +126,8 @@ while True:
                 total = controller.getCharByRange(catalog,"tempo",minTempo,maxTempo)
                 print("Para "+str(genre)+" el tempo esta entre "+str(minTempo)+" y "+str(maxTempo)+" BPM")
                 print("\nEl numero de reproducciones para este genero fueron: "+str(total[0]))
-
-
-
-        minCharE = float(input("Ingrese el minimo de Energia: "))
-        maxCharE = float(input("Ingrese el maximo de Energia: "))
-        minCharD = float(input("Ingrese el minimo de Danzabilidad: "))
-        maxCharD = float(input("Ingrese el maximo de Danzabilidad: "))
-        result = controller.req2(catalog, minCharE, maxCharE, minCharD, maxCharD)
-        answer = lt.size(result)
-        print("\nTotal de pistas unicas para festejar: " + answer)
-        
-
-
+            elif genrePos == 10:
+                
         
 
     else:
