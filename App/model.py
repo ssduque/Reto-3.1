@@ -294,11 +294,19 @@ def deleteRepeated(lst):
 def req2(catalog, minCharE, maxCharE, minCharD, maxCharD):
     lst1 = om.values(catalog["energy"], minCharE, maxCharE)
     lst2 = om.values(catalog["danceability"], minCharD, maxCharD)
-    finalLst = lt.newList(datastructure="ARRAY_LIST", cmpfunction=cmpPosition)
+    finalLst1 = lt.newList(datastructure="ARRAY_LIST", cmpfunction=cmpPosition)
+    finalLst2 = lt.newList(datastructure="ARRAY_LIST", cmpfunction=cmpPosition)
+    finalLst3 = lt.newList(datastructure="ARRAY_LIST", cmpfunction=cmpPosition)
     for element in lt.iterator(lst1):
-        if lt.isPresent(lst2, element):
-            lt.addLast(finalLst, element)
-    finalLst1 = deleteRepeated(finalLst1)
+        for element1 in lt.iterator(element):
+            lt.addLast(finalLst1, element1)
+    for element in lt.iterator(lst2):
+        for element1 in lt.iterator(element):
+            lt.addLast(finalLst2, element1)
+    for element in lt.iterator(finalLst1):
+        if lt.isPresent(finalLst2, element):
+            lt.addLast(finalLst3, element)
+    finalList = deleteRepeated(finalLst3)
     return finalLst
 
 

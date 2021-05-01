@@ -54,6 +54,15 @@ def printCharacteristics():
     print("8. Acousticness")
     print("9. Energy")
 
+def printreq2(result):
+    counter = 0
+    for element1 in lt.iterator(result):
+        element = lt.getElement(catalog["reps"], element1)
+        print("\n El id de la pista " + str(counter)+ "es: " + element["track_id"] + "la energia es: " + element["energy"] + " y la danzabilidad es: " + element["danceability"] )
+        counter = counter + 1
+        if counter == 5:
+            break
+
 catalog = {}
 charList = controller.newCharList()
 """
@@ -92,16 +101,10 @@ while True:
         maxCharD = float(input("Ingrese el maximo de Danzabilidad: "))
         result = controller.req2(catalog, minCharE, maxCharE, minCharD, maxCharD)
         answer = lt.size(result)
-        print("\nTotal de pistas unicas para festejar: " + answer)
+        print("\nTotal de pistas unicas para festejar: " + str(answer))
         print("\nAlgunas de las pistas son: ")
-        counter = 0
-        while counter <  5
-          element = lt.getElement(result, counter)
-          print("\n El id de la pista " + counter + "es: " element["track_id"] + "la energia es: " element["energy"] + " y la danzabilidad es: " element["dancebility"] )
-          counter = counter + 1
+        printreq2(result)
         
-
-
         
 
     else:
