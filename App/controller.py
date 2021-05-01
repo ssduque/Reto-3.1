@@ -77,3 +77,7 @@ def getCharByRange(catalog,bestChar, minchar, maxchar):
     return answers
 # Segundo requerimiento
 
+def req2(catalog, minCharE, maxCharE, minCharD, maxCharD):
+    result = model.req2(catalog, minCharE, maxCharE, minCharD, maxCharD)
+    return result
+

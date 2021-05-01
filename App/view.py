@@ -38,6 +38,7 @@ def printMenu():
     print("Bienvenido")
     print("1- Cargar información en el catálogo")
     print("2- Buscar eventos de escucha en rango de la caracteristica deseada")
+    print("3- Buscar musica para festejar")
 
 
 def printCharacteristics():
@@ -85,7 +86,17 @@ while True:
                 print("\nTotal de eventos de escucha en el rango de "+bestChar+": " + str(total[0]))
                 print('Altura del arbol: ' + str(controller.indexHeight(catalog[bestChar])))
     elif int(inputs[0]) == 3:
-        pass
+        minCharE = float(input("Ingrese el minimo de Energia: "))
+        maxCharE = float(input("Ingrese el maximo de Energia: "))
+        minCharD = float(input("Ingrese el minimo de Danzabilidad: "))
+        maxCharD = float(input("Ingrese el maximo de Danzabilidad: "))
+        result = controller.req2(catalog, minCharE, maxCharE, minCharD, maxCharD)
+        answer = lt.size(result)
+        print("\nTotal de pistas unicas para festejar: " + answer)
+        
+
+
+        
 
     else:
         sys.exit(0)

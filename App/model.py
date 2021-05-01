@@ -64,6 +64,7 @@ def newCatalog():
     catalog["loudness"] = om.newMap(omaptype='RBT', comparefunction=cmpCharacteristics)
     catalog["tempo"] = om.newMap(omaptype='RBT', comparefunction=cmpCharacteristics)
     catalog["acousticness"] = om.newMap(omaptype='RBT', comparefunction=cmpCharacteristics)
+    catalog["energy"] = om.newMap(omaptype='RBT', comparefunction=cmpCharacteristics)
     catalog["artists"] = mp.newMap(numelements=40000, prime=20011, maptype="CHAINING", loadfactor = 2.0, comparefunction=cmpArtistId)
     catalog["reps2"] = mp.newMap(numelements=40000, prime=20011, maptype="CHAINING", loadfactor = 2.0, comparefunction=cmpUserId)
 
@@ -115,6 +116,7 @@ def addReps(catalog, rep, position):
         updateLoudness(catalog["loudness"],rep, position)
         updateTempo(catalog["tempo"],rep, position)
         updateAcousticness(catalog["acousticness"],rep, position)
+        updateEnergy(catalog["energy"],rep, position)
     
 
 def addEntry(dataentry, rep):
@@ -232,6 +234,17 @@ def updateValence(map, rep, position):
         dataentry = me.getValue(entry)
     addEntry(dataentry, position)
     return map
+
+def updateEnergy(map, rep, position):
+    repValence = float(rep['energy'])
+    entry = om.get(map,repValence)
+    if (entry is None):
+        dataentry = newDataEntry()
+        om.put(map, repValence, dataentry)
+    else:
+        dataentry = me.getValue(entry)
+    addEntry(dataentry, position)
+    return map
 #------------------------------------------------
 
 
@@ -277,6 +290,19 @@ def deleteRepeated(lst):
     return finalLst
 
 # Segundo Requerimiento
+
+def req2(catalog, minCharE, maxCharE, minCharD, maxCharD):
+    lst1 = om.values(catalog["energy"], minCharE, maxCharE)
+    lst2 = om.values(catalog["danceability"], minCharD, maxCharD)
+    finalLst = lt.newList(datastructure="ARRAY_LIST", cmpfunction=cmpPosition)
+    for element in lt.iterator(lst1):
+       if lt.isPresent(lst2, element):
+          lt.addLast(finalLst, element)
+    finalLst1 = deleteRepeated(lst)
+    return finalLst
+
+
+        
 
 
 
