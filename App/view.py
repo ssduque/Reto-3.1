@@ -93,6 +93,12 @@ while True:
         result = controller.req2(catalog, minCharE, maxCharE, minCharD, maxCharD)
         answer = lt.size(result)
         print("\nTotal de pistas unicas para festejar: " + answer)
+        print("\nAlgunas de las pistas son: ")
+        counter = 0
+        while counter <  5
+          element = lt.getElement(result, counter)
+          print("\n El id de la pista " + counter + "es: " element["track_id"] + "la energia es: " element["energy"] + " y la danzabilidad es: " element["dancebility"] )
+          counter = counter + 1
         
 
 

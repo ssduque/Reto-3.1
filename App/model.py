@@ -298,7 +298,7 @@ def req2(catalog, minCharE, maxCharE, minCharD, maxCharD):
     for element in lt.iterator(lst1):
         if lt.isPresent(lst2, element):
             lt.addLast(finalLst, element)
-    finalLst1 = deleteRepeated(lst)
+    finalLst1 = deleteRepeated(finalLst1)
     return finalLst
 
 
