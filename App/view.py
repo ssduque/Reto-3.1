@@ -70,8 +70,8 @@ while True:
         print("Artistas unicos: " + str(numArtist))
     elif int(inputs[0]) == 2:
         printCharacteristics()
-        charPos = input("Ingrese el numero de la caracteristica que desea buscar: ")
-        if charPos <= 0 or charPos > 9 or type(charPos) != int:
+        charPos = int(input("Ingrese el numero de la caracteristica que desea buscar: "))
+        if charPos <= 0 or charPos > 9:
             print("Ingrese una numero valido")
         else:
             charPos = int(charPos)
