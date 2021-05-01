@@ -39,6 +39,8 @@ def printMenu():
     print("1- Cargar información en el catálogo")
     print("2- Buscar eventos de escucha en rango de la caracteristica deseada")
     print("3- Buscar musica para festejar")
+    print("4- ")
+    print("5- Estudiar un genero musical")
 
 
 def printCharacteristics():
@@ -67,7 +69,7 @@ def printGenres():
     print("8. Rock")
     print("9. Metal")
 
-    print("10. Añadir genero")
+    print("10. Otro genero")
 
 
 catalog = {}
@@ -116,6 +118,7 @@ while True:
         printGenres()
         genreTuple = tuple(input("Ingrese los numeros de los generos que desea buscar separados por comas: "))
         for genrePos in genreTuple:
+            genrePos = int(genrePos)
             if genrePos <= 0 or genrePos > 10:
                 print("Ingrese una numero valido")
             elif genrePos !=10:
@@ -124,11 +127,15 @@ while True:
                 minTempo = tempoRange[0]
                 maxTempo = tempoRange[1]
                 total = controller.getCharByRange(catalog,"tempo",minTempo,maxTempo)
-                print("Para "+str(genre)+" el tempo esta entre "+str(minTempo)+" y "+str(maxTempo)+" BPM")
+                print("Para "+str(genre)+" el tempo esta entre "+str(minTempo)+" y "+str(maxTempo)+" BPM...")
                 print("\nEl numero de reproducciones para este genero fueron: "+str(total[0]))
             elif genrePos == 10:
-                
-        
+                genre = input("Ingrese el nombre del nuevo genero: ")
+                minTempo = float(input("Ingrese el valor minimo del tempo: "))
+                maxTempo = float(input("Ingrese el valor maximo del tempo: "))
+                total = controller.getCharByRange(catalog,"tempo",minTempo,maxTempo)
+                print("Para "+str(genre)+" el tempo esta entre "+str(minTempo)+" y "+str(maxTempo)+" BPM...")
+                print("\nEl numero de reproducciones para este genero fueron: "+str(total[0]))
 
     else:
         sys.exit(0)
