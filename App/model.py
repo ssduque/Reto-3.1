@@ -296,8 +296,8 @@ def req2(catalog, minCharE, maxCharE, minCharD, maxCharD):
     lst2 = om.values(catalog["danceability"], minCharD, maxCharD)
     finalLst = lt.newList(datastructure="ARRAY_LIST", cmpfunction=cmpPosition)
     for element in lt.iterator(lst1):
-       if lt.isPresent(lst2, element):
-          lt.addLast(finalLst, element)
+        if lt.isPresent(lst2, element):
+            lt.addLast(finalLst, element)
     finalLst1 = deleteRepeated(lst)
     return finalLst
 
