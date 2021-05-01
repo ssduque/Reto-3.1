@@ -39,6 +39,10 @@ def newCharList():
     charList = model.newCharList()
     return charList
 
+def newGenreList():
+    genreList = model.newGenreList()
+    return genreList
+
 # Funciones para la carga de datos
 
 def loadEvents(catalog):
@@ -61,6 +65,10 @@ def getChar(charList, charPos):
     bestChar = model.getChar(charList, charPos)
     return bestChar
 
+def getGenre(genreList, genrePos):
+    tempoRange = model.getGenre(genreList, genrePos)
+    return tempoRange
+
 def repSize(catalog):
    return model.repSize(catalog)
 
@@ -75,5 +83,6 @@ def numArtists(catalog):
 def getCharByRange(catalog,bestChar, minchar, maxchar):
     answers = model.getCharByRange(catalog, bestChar, minchar, maxchar)
     return answers
+
 # Segundo requerimiento
 

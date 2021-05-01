@@ -53,8 +53,25 @@ def printCharacteristics():
     print("8. Acousticness")
     print("9. Energy")
 
+def printGenres():
+    print("1. Reggae")
+    print("2. Down-Tempo")
+    print("3. Chill-out")
+
+    print("4. Hip-hop")
+    print("5. Jazz and Funk")
+    print("6. Pop")
+
+    print("7. R&B")
+    print("8. Rock")
+    print("9. Metal")
+
+    print("10. Añadir genero")
+
+
 catalog = {}
 charList = controller.newCharList()
+genreList = controller.newGenreList()
 """
 Menu principal
 """
@@ -74,7 +91,6 @@ while True:
         if charPos <= 0 or charPos > 9:
             print("Ingrese una numero valido")
         else:
-            charPos = int(charPos)
             bestChar = controller.getChar(charList, charPos)
             minChar = float(input("Ingrese el minimo de "+bestChar+": "))
             maxChar = float(input("Ingrese el maximo de "+bestChar+": "))
@@ -86,6 +102,24 @@ while True:
                 print('Altura del arbol: ' + str(controller.indexHeight(catalog[bestChar])))
     elif int(inputs[0]) == 3:
         pass
+    
+    elif int(inputs[0]) ==5:
+        printGenres()
+        genreTuple = tuple(input("Ingrese los numeros de los generos que desea buscar separados por comas: "))
+        for genrePos in genreTuple:
+            if genrePos <= 0 or genrePos > 10:
+                print("Ingrese una numero valido")
+            elif genrePos !=10:
+                tempoRange = controller.getGenre(genreList,genrePos)
+                genre = tempoRange[2]
+                minTempo = tempoRange[0]
+                maxTempo = tempoRange[1]
+                total = controller.getCharByRange(catalog,"tempo",minTempo,maxTempo)
+                print("Para "+str(genre)+" el tempo esta entre "+str(minTempo)+" y "+str(maxTempo)+" BPM")
+                print("\nEl numero de reproducciones para este genero fueron: "+str(total[0]))
+
+
+
 
     else:
         sys.exit(0)

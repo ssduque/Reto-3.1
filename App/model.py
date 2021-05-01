@@ -84,6 +84,30 @@ def newCharList():
     mp.put(charList, 9, "energy")
     return charList
 
+def newGenreList():
+    genreList = lt.newList(datastructure="ARRAY_LIST", cmpfunction= cmpTempoRange)
+    reggae = (60.0,90.0,"Reggae")
+    downTempo = (70.0,100.0,"Down-Tempo")
+    chillOut = (90.0,120.0,"Chill-out")
+
+    hipHop = (85.0,115.0,"Hip-hop")
+    JazzAndFunk = (120.0,125.0,"Jazz and Funk")
+    pop = (100.0,130.0,"Pop")
+
+    RnB = (60.0,80.0,"R&B")
+    rock = (110.0,140.0,"Rock")
+    metal = (100.0,160.0,"Metal")
+
+    lt.addLast(genreList, reggae )
+    lt.addLast(genreList, downTempo)
+    lt.addLast(genreList, chillOut)
+    lt.addLast(genreList, hipHop)
+    lt.addLast(genreList, JazzAndFunk)
+    lt.addLast(genreList, pop)
+    lt.addLast(genreList, RnB)
+    lt.addLast(genreList, rock)
+    lt.addLast(genreList, metal)
+    return genreList
 
 # Funciones para agregar informacion al catalogo
 
@@ -251,6 +275,11 @@ def getChar(charList, charPos):
     bestChar = mp.get(charList, charPos)
     return me.getValue(bestChar)
 
+def getGenre(genreList, genrePos):
+    tempoRange = lt.getElement(genreList,genrePos)
+    return tempoRange
+
+
 def getPosition(catalog):
     pos = lt.size(catalog["reps"]) + 1
     return pos
@@ -283,6 +312,8 @@ def deleteRepeated(lst):
 # Tercer Requerimiento
 
 # Cuarto Requerimiento
+
+
 
 # Quinto Requerimiento
 
@@ -322,6 +353,13 @@ def cmpArtistId(id1, entry):
     else:
         return -1
 
+def cmpTempoRange(range1, range2):
+    if range1[0]+range1[1] == range2[0]+range2[1]:
+        return 0
+    elif range1[0]+range1[1] > range2[0]+range2[1]:
+        return 1
+    else:
+        return -1
 # Funciones de ordenamiento
 
 
