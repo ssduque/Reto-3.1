@@ -37,9 +37,9 @@ assert cf
 Se define la estructura de un catálogo de videos. El catálogo tendrá dos listas, una para los videos, otra para las categorias de
 los mismos.
 """
-
+#------------------------
 # Construccion de modelos
-
+#------------------------
 def newCatalog():
 
     catalog = {"reps":None,
@@ -70,47 +70,9 @@ def newCatalog():
 
     return catalog
 
-def newCharList():
-    charList = mp.newMap(numelements = 18, loadfactor = 0.5, prime = 19, maptype="PROBING")
-    mp.put(charList, 1, "instrumentalness")
-    mp.put(charList, 2, "liveness")
-    mp.put(charList, 3, "speechiness")
-
-    mp.put(charList, 4, "danceability")
-    mp.put(charList, 5, "valence")
-    mp.put(charList, 6, "loudness")
-
-    mp.put(charList, 7, "tempo")
-    mp.put(charList, 8, "acousticness")
-    mp.put(charList, 9, "energy")
-    return charList
-
-def newGenreList():
-    genreList = lt.newList(datastructure="ARRAY_LIST", cmpfunction= cmpTempoRange)
-    reggae = (60.0,90.0,"Reggae")
-    downTempo = (70.0,100.0,"Down-Tempo")
-    chillOut = (90.0,120.0,"Chill-out")
-
-    hipHop = (85.0,115.0,"Hip-hop")
-    JazzAndFunk = (120.0,125.0,"Jazz and Funk")
-    pop = (100.0,130.0,"Pop")
-
-    RnB = (60.0,80.0,"R&B")
-    rock = (110.0,140.0,"Rock")
-    metal = (100.0,160.0,"Metal")
-
-    lt.addLast(genreList, reggae )
-    lt.addLast(genreList, downTempo)
-    lt.addLast(genreList, chillOut)
-    lt.addLast(genreList, hipHop)
-    lt.addLast(genreList, JazzAndFunk)
-    lt.addLast(genreList, pop)
-    lt.addLast(genreList, RnB)
-    lt.addLast(genreList, rock)
-    lt.addLast(genreList, metal)
-    return genreList
-
+#------------------------------------------------
 # Funciones para agregar informacion al catalogo
+#------------------------------------------------
 
 def addRep2(catalog, rep2):
     addToMap(catalog,rep2)
@@ -269,14 +231,55 @@ def updateEnergy(map, rep, position):
         dataentry = me.getValue(entry)
     addEntry(dataentry, position)
     return map
-#------------------------------------------------
 
 
+#---------------------------------
 # Funciones para creacion de datos
+#----------------------------------
 
+def newCharList():
+    charList = mp.newMap(numelements = 18, loadfactor = 0.5, prime = 19, maptype="PROBING")
+    mp.put(charList, 1, "instrumentalness")
+    mp.put(charList, 2, "liveness")
+    mp.put(charList, 3, "speechiness")
 
+    mp.put(charList, 4, "danceability")
+    mp.put(charList, 5, "valence")
+    mp.put(charList, 6, "loudness")
 
+    mp.put(charList, 7, "tempo")
+    mp.put(charList, 8, "acousticness")
+    mp.put(charList, 9, "energy")
+    return charList
+
+def newGenreList():
+    genreList = lt.newList(datastructure="ARRAY_LIST", cmpfunction= cmpTempoRange)
+    reggae = (60.0,90.0,"Reggae")
+    downTempo = (70.0,100.0,"Down-Tempo")
+    chillOut = (90.0,120.0,"Chill-out")
+
+    hipHop = (85.0,115.0,"Hip-hop")
+    JazzAndFunk = (120.0,125.0,"Jazz and Funk")
+    pop = (100.0,130.0,"Pop")
+
+    RnB = (60.0,80.0,"R&B")
+    rock = (110.0,140.0,"Rock")
+    metal = (100.0,160.0,"Metal")
+
+    lt.addLast(genreList, reggae )
+    lt.addLast(genreList, downTempo)
+    lt.addLast(genreList, chillOut)
+    lt.addLast(genreList, hipHop)
+    lt.addLast(genreList, JazzAndFunk)
+    lt.addLast(genreList, pop)
+    lt.addLast(genreList, RnB)
+    lt.addLast(genreList, rock)
+    lt.addLast(genreList, metal)
+    return genreList
+
+#------------------------
 # Funciones de consulta
+#------------------------
 
 def repSize(catalog):
     return lt.size(catalog["reps"])
