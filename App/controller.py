@@ -23,6 +23,7 @@
 import config as cf
 import model
 import csv
+import datetime
 
 
 """
@@ -39,6 +40,10 @@ def newCharList():
     charList = model.newCharList()
     return charList
 
+def newGenreList():
+    genreList = model.newGenreList()
+    return genreList
+
 # Funciones para la carga de datos
 
 def loadEvents(catalog):
@@ -46,6 +51,11 @@ def loadEvents(catalog):
     eventsDict1 = csv.DictReader(open(eventsfile1, encoding='utf-8'))
     eventsfile2 = cf.data_dir + "subsamples-small/user_track_hashtag_timestamp-small.csv"
     eventsDict2 = csv.DictReader(open(eventsfile2, encoding='utf-8'))
+    eventsfile3 = cf.data_dir + "subsamples-small/sentiment_values.csv"
+    eventsDict3 = csv.DictReader(open(eventsfile2, encoding='utf-8'))
+
+    for rep3 in eventsDict3:
+        model.addRep3(catalog, rep3)
     for rep2 in eventsDict2:
         model.addRep2(catalog, rep2)
     for rep in eventsDict1:
@@ -61,6 +71,10 @@ def getChar(charList, charPos):
     bestChar = model.getChar(charList, charPos)
     return bestChar
 
+def getGenre(genreList, genrePos):
+    tempoRange = model.getGenre(genreList, genrePos)
+    return tempoRange
+
 def repSize(catalog):
    return model.repSize(catalog)
 
@@ -75,9 +89,16 @@ def numArtists(catalog):
 def getCharByRange(catalog,bestChar, minchar, maxchar):
     answers = model.getCharByRange(catalog, bestChar, minchar, maxchar)
     return answers
+
 # Segundo requerimiento
 
 def req2(catalog, minCharE, maxCharE, minCharD, maxCharD):
     result = model.req2(catalog, minCharE, maxCharE, minCharD, maxCharD)
     return result
 
+
+def req5(catalog, initialTime, finalTime):
+    initialTi = datetime.datetime.strptime(initialTime, '%H:%M')
+    finalTi = datetime.datetime.strptime(finalTime, '%H:%M')
+    result = model.req5(catalog, initialTi, finalTi)
+    return result

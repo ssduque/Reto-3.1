@@ -31,15 +31,16 @@ from DISClib.ADT import map as mp
 from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Sorting import mergesort as merge
+import datetime
 assert cf
 
 """
 Se define la estructura de un catálogo de videos. El catálogo tendrá dos listas, una para los videos, otra para las categorias de
 los mismos.
 """
-
+#------------------------
 # Construccion de modelos
-
+#------------------------
 def newCatalog():
 
     catalog = {"reps":None,
@@ -51,9 +52,12 @@ def newCatalog():
                 "loudness":None,
                 "tempo":None,
                 "acousticness":None,
+                "energy":None,
                 "trackMap":None,
                 "artists":None,
-                "reps2": None}
+                "reps2": None,
+                "times":None,
+                "reps3":None}
 
     catalog["reps"] = lt.newList(datastructure="ARRAY_LIST")
     catalog["instrumentalness"]= om.newMap(omaptype='RBT', comparefunction=cmpCharacteristics)
@@ -67,26 +71,16 @@ def newCatalog():
     catalog["energy"] = om.newMap(omaptype='RBT', comparefunction=cmpCharacteristics)
     catalog["artists"] = mp.newMap(numelements=40000, prime=20011, maptype="CHAINING", loadfactor = 2.0, comparefunction=cmpArtistId)
     catalog["reps2"] = mp.newMap(numelements=40000, prime=20011, maptype="CHAINING", loadfactor = 2.0, comparefunction=cmpUserId)
+    catalog["times"] = om.newMap(omaptype='RBT', comparefunction=cmpCharacteristics)
+    catalog["reps3"] = mp.newMap(numelements=40000, prime=20011, maptype="CHAINING", loadfactor = 2.0)
 
     return catalog
 
-def newCharList():
-    charList = mp.newMap(numelements = 18, loadfactor = 0.5, prime = 19, maptype="PROBING")
-    mp.put(charList, 1, "instrumentalness")
-    mp.put(charList, 2, "liveness")
-    mp.put(charList, 3, "speechiness")
-
-    mp.put(charList, 4, "danceability")
-    mp.put(charList, 5, "valence")
-    mp.put(charList, 6, "loudness")
-
-    mp.put(charList, 7, "tempo")
-    mp.put(charList, 8, "acousticness")
-    mp.put(charList, 9, "energy")
-    return charList
-
-
+#------------------------------------------------
 # Funciones para agregar informacion al catalogo
+#------------------------------------------------
+def addRep3(catalog, rep3):
+    addToMap2(catalog, rep3)
 
 def addRep2(catalog, rep2):
     addToMap(catalog,rep2)
@@ -117,6 +111,7 @@ def addReps(catalog, rep, position):
         updateTempo(catalog["tempo"],rep, position)
         updateAcousticness(catalog["acousticness"],rep, position)
         updateEnergy(catalog["energy"],rep, position)
+        updateTimes(catalog["times"],rep, position)
     
 
 def addEntry(dataentry, rep):
@@ -135,6 +130,15 @@ def addToMap(catalog,rep2):
     else:
         dataentry = me.getValue(existsEntry)
     addEntry(dataentry, rep2)
+
+def addToMap2(catalog,rep3):
+    existsEntry = mp.get(catalog["reps3"], rep3["hashtag"])
+    if existsEntry == None:
+        dataentry = newDataEntry()
+        mp.put(catalog["reps3"],rep3["hashtag"],dataentry)
+    else:
+        dataentry = me.getValue(existsEntry)
+    addEntry(dataentry, rep3)
 
 def addArtist(catalog, rep, position):
     existsArtist = mp.get(catalog["artists"], rep["artist_id"])
@@ -245,14 +249,67 @@ def updateEnergy(map, rep, position):
         dataentry = me.getValue(entry)
     addEntry(dataentry, position)
     return map
-#------------------------------------------------
+
+def updateTimes(map, rep, position):
+    repOccuredOn = rep['created_at']
+    repDate = datetime.datetime.strptime(repOccuredOn, '%Y-%m-%d %H:%M:%S')
+    entry = om.get(map,repDate.time())
+    if (entry is None):
+        dataentry = newDataEntry()
+        om.put(map, repValence, dataentry)
+    else:
+        dataentry = me.getValue(entry)
+    addEntry(dataentry, position)
+    return map
 
 
+#---------------------------------
 # Funciones para creacion de datos
+#----------------------------------
 
+def newCharList():
+    charList = mp.newMap(numelements = 18, loadfactor = 0.5, prime = 19, maptype="PROBING")
+    mp.put(charList, 1, "instrumentalness")
+    mp.put(charList, 2, "liveness")
+    mp.put(charList, 3, "speechiness")
 
+    mp.put(charList, 4, "danceability")
+    mp.put(charList, 5, "valence")
+    mp.put(charList, 6, "loudness")
 
+    mp.put(charList, 7, "tempo")
+    mp.put(charList, 8, "acousticness")
+    mp.put(charList, 9, "energy")
+    return charList
+
+def newGenreList():
+    genreList = lt.newList(datastructure="ARRAY_LIST", cmpfunction= cmpTempoRange)
+    reggae = (60.0,90.0,"Reggae")
+    downTempo = (70.0,100.0,"Down-Tempo")
+    chillOut = (90.0,120.0,"Chill-out")
+
+    hipHop = (85.0,115.0,"Hip-hop")
+    JazzAndFunk = (120.0,125.0,"Jazz and Funk")
+    pop = (100.0,130.0,"Pop")
+
+    RnB = (60.0,80.0,"R&B")
+    rock = (110.0,140.0,"Rock")
+    metal = (100.0,160.0,"Metal")
+
+    lt.addLast(genreList, reggae )
+    lt.addLast(genreList, downTempo)
+    lt.addLast(genreList, chillOut)
+    lt.addLast(genreList, hipHop)
+    lt.addLast(genreList, JazzAndFunk)
+    lt.addLast(genreList, pop)
+    lt.addLast(genreList, RnB)
+    lt.addLast(genreList, rock)
+    lt.addLast(genreList, metal)
+    return genreList
+
+#------------------------
 # Funciones de consulta
+#------------------------
 
 def repSize(catalog):
     return lt.size(catalog["reps"])
@@ -263,6 +320,11 @@ def indexHeight(catalogIndex):
 def getChar(charList, charPos):
     bestChar = mp.get(charList, charPos)
     return me.getValue(bestChar)
+
+def getGenre(genreList, genrePos):
+    tempoRange = lt.getElement(genreList,genrePos)
+    return tempoRange
+
 
 def getPosition(catalog):
     pos = lt.size(catalog["reps"]) + 1
@@ -318,7 +380,63 @@ def req2(catalog, minCharE, maxCharE, minCharD, maxCharD):
 
 # Cuarto Requerimiento
 
+
+
 # Quinto Requerimiento
+
+def req5(catalog, initialTi, finalTi):
+
+    lst = om.values(catalog['times'], inialTi, finalTi)
+    reggae = { 'reps': 0, 'avg' : 0, 'name': 'Reggae'}
+    d_t = { 'reps' : 0, 'avg' : 0, 'name' : 'Down-Tempo'}
+    c_o = { 'reps' : 0, 'avg' : 0, 'name' : 'Chill-Out'}
+    h_h = { 'reps' : 0, 'avg' : 0, 'name' : 'Hip-Hop'}
+    j_f = { 'reps' : 0, 'avg' : 0, 'name' : 'Jazz and Funk'}
+    po = { 'reps' : 0, 'avg' : 0, 'name' : 'Pop'}
+    rYb = { 'reps' : 0, 'avg' : 0, 'name' : 'R&B'}
+    rock = { 'reps' : 0, 'avg' : 0, 'name' : 'Rock'}
+    metal = { 'reps' : 0, 'avg' : 0, 'name' : 'Metal'}
+
+    for element in lst:
+        for element1 in element:
+            a = mp.get(catalog['reps2'], element1['user_id'])
+            b = me.getValue(a)['hashtag']
+            c = mp.get(catalog['reps3'], b)
+            senti = me.getValue(c)
+            if(element1['tempo'] >= 60 and element1['tempo'] <= 90 ):
+               reggae['reps'] = reggae['reps'] + 1
+               reggae['avg'] = reggae['avg'] + senti['vader_avg']
+            if(element1['tempo'] >= 70 and element1['tempo'] <= 100 ):
+               d_t['reps'] = d_t['reps'] + 1
+               d_t['avg'] = d_t['avg']+ senti['vader_avg']
+            if(element1['tempo'] >= 90 and element1['tempo'] <= 120 ):
+               c_o['reps'] = c_o['reps'] + 1
+               c_o['avg'] = c_o['avg']+ senti['vader_avg']
+            if(element1['tempo'] >= 85 and element1['tempo'] <= 115 ):
+               h_h['reps'] = h_h['reps']+ 1
+               h_h['avg'] = h_h['avg'] + senti['vader_avg']
+            if(element1['tempo'] >= 120 and element1['tempo'] <= 125 ):
+               j_f['reps'] = j_f['reps'] + 1
+               j_f['avg'] = j_f['avg']+ senti['vader_avg']
+            if(element1['tempo'] >= 100 and element1['tempo'] <= 130 ):
+               po['reps'] = po['reps'] + 1
+               po['avg'] = po['avg']+ senti['vader_avg']
+            if(element1['tempo'] >= 60 and element1['tempo'] <= 80 ):
+               rYb['reps'] = rYb['reps']+ 1
+               rYb['avg'] = rYb['avg'] + senti['vader_avg']
+            if(element1['tempo'] >= 110 and element1['tempo'] <= 140 ):
+               rock['reps'] = rock['reps'] + 1
+               rock['avg'] = rock['avg'] + senti['vader_avg']
+            if(element1['tempo'] >= 100 and element1['tempo'] <= 160 ):
+               metal['reps'] = metal['reps'] + 1
+               metal['avg'] = metal['avg'] + senti['vader_avg']
+
+    maxi = max(reggae['reps'], d_t['reps'], c_o['reps'], h_h['reps'], j_f['reps'], po['reps'], rYb['reps'], rock['reps'], metal['reps']) 
+    name = maxi['name']
+    avg = (maxi['reps']/maxi['avg'])
+    return name, avg
+
+
 
 # Funciones utilizadas para comparar elementos dentro de una lista
 
@@ -356,6 +474,13 @@ def cmpArtistId(id1, entry):
     else:
         return -1
 
+def cmpTempoRange(range1, range2):
+    if range1[0]+range1[1] == range2[0]+range2[1]:
+        return 0
+    elif range1[0]+range1[1] > range2[0]+range2[1]:
+        return 1
+    else:
+        return -1
 # Funciones de ordenamiento
 
 
