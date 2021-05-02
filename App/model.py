@@ -57,7 +57,7 @@ def newCatalog():
                 "artists":None,
                 "reps2": None,
                 "times":None,
-                "reps3":None}
+                "feelings":None}
 
     catalog["reps"] = lt.newList(datastructure="ARRAY_LIST")
     catalog["instrumentalness"]= om.newMap(omaptype='RBT', comparefunction=cmpCharacteristics)
@@ -71,16 +71,17 @@ def newCatalog():
     catalog["energy"] = om.newMap(omaptype='RBT', comparefunction=cmpCharacteristics)
     catalog["artists"] = mp.newMap(numelements=40000, prime=20011, maptype="CHAINING", loadfactor = 2.0, comparefunction=cmpArtistId)
     catalog["reps2"] = mp.newMap(numelements=40000, prime=20011, maptype="CHAINING", loadfactor = 2.0, comparefunction=cmpUserId)
-    catalog["times"] = om.newMap(omaptype='RBT', comparefunction=cmpCharacteristics)
-    catalog["reps3"] = mp.newMap(numelements=40000, prime=20011, maptype="CHAINING", loadfactor = 2.0)
+    
+    catalog["times"] = om.newMap(omaptype='RBT', comparefunction=compareTimes)
+    catalog["feelings"] = mp.newMap(numelements=40000, prime=20011, maptype="CHAINING", loadfactor = 2.0)
 
     return catalog
 
 #------------------------------------------------
 # Funciones para agregar informacion al catalogo
 #------------------------------------------------
-def addRep3(catalog, rep3):
-    addToMap2(catalog, rep3)
+def addFeelings(catalog, feeling):
+    addFeeling(catalog, feeling)
 
 def addRep2(catalog, rep2):
     addToMap(catalog,rep2)
@@ -131,14 +132,14 @@ def addToMap(catalog,rep2):
         dataentry = me.getValue(existsEntry)
     addEntry(dataentry, rep2)
 
-def addToMap2(catalog,rep3):
-    existsEntry = mp.get(catalog["reps3"], rep3["hashtag"])
+def addFeeling(catalog,feeling):
+    existsEntry = mp.get(catalog["feelings"], feeling["hashtag"])
     if existsEntry == None:
         dataentry = newDataEntry()
-        mp.put(catalog["reps3"],rep3["hashtag"],dataentry)
+        mp.put(catalog["feelings"],feeling["hashtag"],dataentry)
     else:
         dataentry = me.getValue(existsEntry)
-    addEntry(dataentry, rep3)
+    addEntry(dataentry, feeling)
 
 def addArtist(catalog, rep, position):
     existsArtist = mp.get(catalog["artists"], rep["artist_id"])
@@ -256,7 +257,7 @@ def updateTimes(map, rep, position):
     entry = om.get(map,repDate.time())
     if (entry is None):
         dataentry = newDataEntry()
-        om.put(map, repValence, dataentry)
+        om.put(map, repDate.time(), dataentry)
     else:
         dataentry = me.getValue(entry)
     addEntry(dataentry, position)
@@ -386,7 +387,12 @@ def req2(catalog, minCharE, maxCharE, minCharD, maxCharD):
 
 def req5(catalog, initialTi, finalTi):
 
-    lst = om.values(catalog['times'], inialTi, finalTi)
+    # Obtiene una lista que contiene en cada posición una lista con los eventos de escucha de una determinada fecha
+
+    lst = om.values(catalog['times'], initialTi, finalTi)
+
+    # Crea un diccionario para cada genero musical
+
     reggae = { 'reps': 0, 'avg' : 0, 'name': 'Reggae'}
     d_t = { 'reps' : 0, 'avg' : 0, 'name' : 'Down-Tempo'}
     c_o = { 'reps' : 0, 'avg' : 0, 'name' : 'Chill-Out'}
@@ -397,11 +403,14 @@ def req5(catalog, initialTi, finalTi):
     rock = { 'reps' : 0, 'avg' : 0, 'name' : 'Rock'}
     metal = { 'reps' : 0, 'avg' : 0, 'name' : 'Metal'}
 
+    # Para cada elemento en cada fecha de la lista de fechas obtiene el genero y lo suma a la cantidad de pistas de ese determinado genero,
+    # Adicionalmente toma el valor de vader_avg y lo suma a la suma de su determinado genero
+
     for element in lst:
         for element1 in element:
             a = mp.get(catalog['reps2'], element1['user_id'])
             b = me.getValue(a)['hashtag']
-            c = mp.get(catalog['reps3'], b)
+            c = mp.get(catalog['feelings'], b)
             senti = me.getValue(c)
             if(element1['tempo'] >= 60 and element1['tempo'] <= 90 ):
                reggae['reps'] = reggae['reps'] + 1
@@ -431,10 +440,17 @@ def req5(catalog, initialTi, finalTi):
                metal['reps'] = metal['reps'] + 1
                metal['avg'] = metal['avg'] + senti['vader_avg']
 
+    # Obtiene el genero mas repetido, el promedio de vader_avg de cada una de las pistas que pertenecen a ese genero y los retorna
+
     maxi = max(reggae['reps'], d_t['reps'], c_o['reps'], h_h['reps'], j_f['reps'], po['reps'], rYb['reps'], rock['reps'], metal['reps']) 
     name = maxi['name']
     avg = (maxi['reps']/maxi['avg'])
     return name, avg
+
+def req51(catalog, initialTi, finalTi):
+
+    lst = om.values(catalog['times'], initialTi, finalTi)
+    return lst
 
 
 
@@ -478,6 +494,17 @@ def cmpTempoRange(range1, range2):
     if range1[0]+range1[1] == range2[0]+range2[1]:
         return 0
     elif range1[0]+range1[1] > range2[0]+range2[1]:
+        return 1
+    else:
+        return -1
+
+def compareTimes(time1, time2):
+    """
+    Compara dos tiempos
+    """
+    if (time1 == time2):
+        return 0
+    elif (time1 > time2):
         return 1
     else:
         return -1

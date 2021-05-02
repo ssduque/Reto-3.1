@@ -54,8 +54,8 @@ def loadEvents(catalog):
     eventsfile3 = cf.data_dir + "subsamples-small/sentiment_values.csv"
     eventsDict3 = csv.DictReader(open(eventsfile2, encoding='utf-8'))
 
-    for rep3 in eventsDict3:
-        model.addRep3(catalog, rep3)
+    for feeling in eventsDict3:
+        model.addFeelings(catalog, feeling)
     for rep2 in eventsDict2:
         model.addRep2(catalog, rep2)
     for rep in eventsDict1:
@@ -98,7 +98,7 @@ def req2(catalog, minCharE, maxCharE, minCharD, maxCharD):
 
 
 def req5(catalog, initialTime, finalTime):
-    initialTi = datetime.datetime.strptime(initialTime, '%H:%M')
-    finalTi = datetime.datetime.strptime(finalTime, '%H:%M')
-    result = model.req5(catalog, initialTi, finalTi)
+    initialTi = datetime.datetime.strptime(initialTime, '%H:%M:%S')
+    finalTi = datetime.datetime.strptime(finalTime, '%H:%M:%S')
+    result = model.req51(catalog, initialTi, finalTi)
     return result

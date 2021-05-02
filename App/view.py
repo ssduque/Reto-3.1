@@ -149,8 +149,8 @@ while True:
                 print("\nEl numero de reproducciones para este genero fueron: "+str(total[0]))
     
     elif int(inputs[0]) == 6:
-        initialTime = input("Ingrese la hora desde la que desea buscar (H:M): ")
-        finalTime = input("Ingrese la hora desde la que desea buscar (H:M): ")
+        initialTime = input("Ingrese la hora desde la que desea buscar (H:M:S): ")
+        finalTime = input("Ingrese la hora desde la que desea buscar (H:M:S): ")
         result = controller.req5(catalog, initialTime, finalTime)
         print(result)
         
