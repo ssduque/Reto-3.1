@@ -334,7 +334,10 @@ def getPosition(catalog):
 def numArtists(catalog):
     artistList = mp.keySet(catalog["artists"])
     return lt.size(artistList)
-#--------------------------------------------------------------------------------------------
+
+#-----------------------------
+#Requerimientos
+#-----------------------------
 
 # Primer Requerimiento
 
@@ -370,7 +373,7 @@ def req2(catalog, minCharE, maxCharE, minCharD, maxCharD):
         if lt.isPresent(finalLst2, element):
             lt.addLast(finalLst3, element)
     finalList = deleteRepeated(finalLst3)
-    return finalLst
+    return finalList
 
 
         
