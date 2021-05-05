@@ -52,7 +52,7 @@ def loadEvents(catalog):
     eventsfile2 = cf.data_dir + "subsamples-small/user_track_hashtag_timestamp-small.csv"
     eventsDict2 = csv.DictReader(open(eventsfile2, encoding='utf-8'))
     eventsfile3 = cf.data_dir + "subsamples-small/sentiment_values.csv"
-    eventsDict3 = csv.DictReader(open(eventsfile2, encoding='utf-8'))
+    eventsDict3 = csv.DictReader(open(eventsfile3, encoding='utf-8'))
 
     for feeling in eventsDict3:
         model.addFeelings(catalog, feeling)
