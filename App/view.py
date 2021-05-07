@@ -39,7 +39,7 @@ def printMenu():
     print("1- Cargar información en el catálogo")
     print("2- Buscar eventos de escucha en rango de la caracteristica deseada")
     print("3- Buscar musica para festejar")
-    print("4- ")
+    print("4- Buscar musica para estudiar")
     print("5- Estudiar un genero musical")
     print("6- Buscar el genero musical mas escuchado en un rango de horas")
 
@@ -80,6 +80,11 @@ def printGenres():
 
     print("10. Otro genero")
 
+def printRandomTracks(catalog, lst):
+    randomTracks = controller.pickRandomTracks(catalog, lst)
+    trackNumber = 1
+    for track in lt.iterator(randomTracks):
+        print("Track"+str(trackNumber)+": "+str(track["track_id"])+" con instrumentalidad de "+str(track["instrumentalness"])+" y tempo de "+str(track["tempo"]))
 
 catalog = {}
 charList = controller.newCharList()
@@ -115,16 +120,19 @@ while True:
                 print('Altura del arbol: ' + str(controller.indexHeight(catalog[bestChar])))
 
     elif int(inputs[0]) == 3:
-        minCharE = float(input("Ingrese el minimo de Energia: "))
-        maxCharE = float(input("Ingrese el maximo de Energia: "))
-        minCharD = float(input("Ingrese el minimo de Danzabilidad: "))
-        maxCharD = float(input("Ingrese el maximo de Danzabilidad: "))
-        result = controller.req2(catalog, minCharE, maxCharE, minCharD, maxCharD)
-        answer = lt.size(result)
-        print("\nTotal de pistas unicas para festejar: " + str(answer))
-        print("\nAlgunas de las pistas son: ")
-        printreq2(result)
-    
+        pass
+
+    elif int(inputs[0]) == 4:
+        minInstrumentalness = float(input("Ingrese el valor minimo de instrumentalidad (Entre 1.0 y -1.0): "))
+        maxInstrumentalness = float(input("Ingrese el valor maximo de instrumentalidad (Entre 1.0 y -1.0): "))
+        minTempo = float(input("Ingrese el valor minimo para el tempo: "))
+        maxTempo = float(input("Ingrese el valor maximo para el tempo: "))
+        instrumentalList = controller.getCharByRange(catalog, "instrumentalness", minInstrumentalness, maxInstrumentalness)
+        tempoList = controller.getCharByRange(catalog, "tempo", minTempo, maxTempo)
+        answers = controller.joinLists(instrumentalList[1], tempoList[1])
+        print("Hay un total de " + str(answers[0]) + " repeticiones entre el rango de instrumentalidad " + str(minInstrumentalness) + " - " + str(maxInstrumentalness) + " y para el rango de tempo "+str(minTempo)+" - "+str(maxTempo))
+        printRandomTracks(catalog, answers[1])
+
     elif int(inputs[0]) ==5:
         printGenres()
         genreTuple = tuple(input("Ingrese los numeros de los generos que desea buscar separados por comas: "))
@@ -149,10 +157,7 @@ while True:
                 print("\nEl numero de reproducciones para este genero fueron: "+str(total[0]))
     
     elif int(inputs[0]) == 6:
-        initialTime = input("Ingrese la hora desde la que desea buscar (H:M:S): ")
-        finalTime = input("Ingrese la hora desde la que desea buscar (H:M:S): ")
-        result = controller.req5(catalog, initialTime, finalTime)
-        print(result)
+        pass
         
 
     else:
