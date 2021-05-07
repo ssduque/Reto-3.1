@@ -57,14 +57,9 @@ def printCharacteristics():
     print("8. Acousticness")
     print("9. Energy")
 
-def printreq2(result):
-    counter = 0
-    for element1 in lt.iterator(result):
-        element = lt.getElement(catalog["reps"], element1)
-        print("\n El id de la pista " + str(counter)+ "es: " + element["track_id"] + "la energia es: " + element["energy"] + " y la danzabilidad es: " + element["danceability"] )
-        counter = counter + 1
-        if counter == 5:
-            break
+
+
+
 def printGenres():
     print("1. Reggae")
     print("2. Down-Tempo")
@@ -83,7 +78,8 @@ def printGenres():
 def printRandomTracks(catalog, lst):
     randomTracks = controller.pickRandomTracks(catalog, lst)
     trackNumber = 1
-    for track in lt.iterator(randomTracks):
+    for track1 in lt.iterator(randomTracks):
+        track = track1[0]
         print("Track"+str(trackNumber)+": "+str(track["track_id"])+" con instrumentalidad de "+str(track["instrumentalness"])+" y tempo de "+str(track["tempo"]))
 
 catalog = {}
